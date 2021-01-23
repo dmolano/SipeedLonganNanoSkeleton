@@ -14,16 +14,21 @@
  * You should have received a copy of the GNU General Public License 
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+#include "gd32vf103.h"
 
-#include "led.h"
+#ifndef __DMR_SLNS_RCU_H
+#define __DMR_SLNS_RCU_H
 
-#define NO_ERROR_INIT_SLN 0
-
-#define FOREVER 1
+// ---------------------------------------------------------------------
+// Public Prototypes
+// ---------------------------------------------------------------------
 
 /*!
-    \brief      Sipeed Longan Nano struct
+    \brief      rcu_init function
+    \param[in]  none
+    \param[out] none
+    \retval     none
 */
-typedef struct
-{
-} sipeed_longan_nano, *sipeed_longan_nano_ptr;
+void rcu_init();
+
+#endif

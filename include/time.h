@@ -16,10 +16,14 @@
  */
 #include "gd32vf103.h"
 
-#ifndef __GD32VF103_TIME_H
-#define __GD32VF103_TIME_H
+#ifndef __DMR_SLNS_TIME_H
+#define __DMR_SLNS_TIME_H
 
 #define ONE_SECOND_TIME 1000 /*!< in milliseconds */
+
+// ---------------------------------------------------------------------
+// Public Prototypes
+// ---------------------------------------------------------------------
 
 /*!
     \brief      delay a time in milliseconds

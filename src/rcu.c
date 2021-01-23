@@ -15,15 +15,25 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "led.h"
+#include "rcu.h"
 
-#define NO_ERROR_INIT_SLN 0
+// ---------------------------------------------------------------------
+// Local Prototypes
+// ---------------------------------------------------------------------
 
-#define FOREVER 1
-
+// ---------------------------------------------------------------------
+// Bodies
+// ---------------------------------------------------------------------
 /*!
-    \brief      Sipeed Longan Nano struct
+    \brief      rcu_init function
+    \param[in]  none
+    \param[out] none
+    \retval     none
 */
-typedef struct
+void rcu_init()
 {
-} sipeed_longan_nano, *sipeed_longan_nano_ptr;
+    /* enable the led clock */
+    rcu_periph_clock_enable(RCU_GPIOA);
+    rcu_periph_clock_enable(RCU_GPIOB);
+    rcu_periph_clock_enable(RCU_GPIOC);
+}
