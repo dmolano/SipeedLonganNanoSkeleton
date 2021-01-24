@@ -1,5 +1,5 @@
 /* 
- * This file is part of the Sipeed Longan Nano Skeleton. Reset and clock unit (RCU).
+ * This file is part of the Sipeed Longan Nano Skeleton. General-purpose and alternate-function I/Os (GPIO and AFIO)
  * Copyright (c) 2021 Dionisio Molano Robledo.
  * 
  * This program is free software: you can redistribute it and/or modify  
@@ -15,7 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "rcu.h"
+#include "gpio.h"
 
 // ---------------------------------------------------------------------
 // Local Prototypes
@@ -25,23 +25,17 @@
 // Bodies
 // ---------------------------------------------------------------------
 /*!
-    \brief      RCUs initialization function.
-    \param[in]  Pointer to a non-repeating list of rcu_periph_enum.
-                The list will end when two contiguous items are repeated.
+    \brief      GPIO initialization function on the board's LEDs.
+    \param[in]  none.
     \param[out] none
     \retval     none
 */
-void slns_rcu_init(rcu_periph_enum *rcu_periph)
+void slns_gpio_leds_in_board_init()
 {
-    if (rcu_periph != NULL)
-    {
-        rcu_periph_enum sentinel_node;
-
-        do
-        {
-            sentinel_node = *rcu_periph;
-            rcu_periph_clock_enable(*rcu_periph);
-            rcu_periph++;
-        } while (*rcu_periph != sentinel_node);
-    }
+    gpio_init(RED_LED_BOARD_GPIO_PORT, GPIO_MODE_OUT_PP, GPIO_OSPEED_50MHZ, RED_LED_BOARD_GPIO_PIN);
+    gpio_init(GREEN_LED_BOARD_GPIO_PORT, GPIO_MODE_OUT_PP, GPIO_OSPEED_50MHZ, GREEN_LED_BOARD_GPIO_PIN);
+    gpio_init(BLUE_LED_BOARD_GPIO_PORT, GPIO_MODE_OUT_PP, GPIO_OSPEED_50MHZ, BLUE_LED_BOARD_GPIO_PIN);
+    GPIO_BOP(RED_LED_BOARD_GPIO_PORT) = RED_LED_BOARD_GPIO_PIN;
+    GPIO_BOP(GREEN_LED_BOARD_GPIO_PORT) = GREEN_LED_BOARD_GPIO_PIN;
+    GPIO_BOP(BLUE_LED_BOARD_GPIO_PORT) = BLUE_LED_BOARD_GPIO_PIN;
 }

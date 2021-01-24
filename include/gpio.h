@@ -1,5 +1,5 @@
 /* 
- * This file is part of the Sipeed Longan Nano Skeleton. Reset and clock unit (RCU).
+ * This file is part of the Sipeed Longan Nano Skeleton. General-purpose and alternate-function I/Os (GPIO and AFIO)
  * Copyright (c) 2021 Dionisio Molano Robledo.
  * 
  * This program is free software: you can redistribute it and/or modify  
@@ -16,20 +16,26 @@
  */
 #include "gd32vf103.h"
 
-#ifndef __GD32VF103_SLNS_RCU_H
-#define __GD32VF103_SLNS_RCU_H
+#ifndef __GD32VF103_SLNS_GPIO_H
+#define __GD32VF103_SLNS_GPIO_H
+
+#define RED_LED_BOARD_GPIO_PIN GPIO_PIN_13
+#define GREEN_LED_BOARD_GPIO_PIN GPIO_PIN_1
+#define BLUE_LED_BOARD_GPIO_PIN GPIO_PIN_2
+
+#define RED_LED_BOARD_GPIO_PORT GPIOC
+#define GREEN_LED_BOARD_GPIO_PORT GPIOA
+#define BLUE_LED_BOARD_GPIO_PORT GPIOA
 
 // ---------------------------------------------------------------------
 // Public Prototypes
 // ---------------------------------------------------------------------
-
 /*!
-    \brief      RCUs initialization function.
-    \param[in]  Pointer to a non-repeating list of rcu_periph_enum.
-                The list will end when two contiguous items are repeated.
+    \brief      GPIO initialization function on the board's LEDs.
+    \param[in]  none
     \param[out] none
     \retval     none
 */
-void slns_rcu_init(rcu_periph_enum *rcu_periph);
+void slns_gpio_leds_in_board_init();
 
 #endif

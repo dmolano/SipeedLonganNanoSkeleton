@@ -17,6 +17,7 @@
 #include "gd32vf103.h"
 #include "time.h"
 #include "rcu.h"
+#include "gpio.h"
 
 #ifndef __GD32VF103_SLNS_LED_H
 #define __GD32VF103_SLNS_LED_H

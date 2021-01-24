@@ -88,6 +88,10 @@ int main_loop(sipeed_longan_nano_ptr sln_data_ptr)
     {
         led_red_flash_times(ONE_SECOND_TIME/10, 3, ONE_SECOND_TIME/10);
         time_delay_1ms(ONE_SECOND_TIME);
+        led_green_flash_times(ONE_SECOND_TIME/10, 3, ONE_SECOND_TIME/10);
+        time_delay_1ms(ONE_SECOND_TIME);
+        led_blue_flash_times(ONE_SECOND_TIME/10, 3, ONE_SECOND_TIME/10);
+        time_delay_1ms(ONE_SECOND_TIME);
     }
     return result;
 }

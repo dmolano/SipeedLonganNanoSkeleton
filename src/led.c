@@ -17,6 +17,9 @@
 
 #include "led.h"
 
+#define RCUS_FOR_BOARDS_LEDS 2
+#define SENTINEL_NODE 1
+
 // ---------------------------------------------------------------------
 // Local Prototypes
 // ---------------------------------------------------------------------
@@ -34,18 +37,14 @@ void led_init()
 {
     struct
     {
-        rcu_periph_enum rcu_periph[3];
+        rcu_periph_enum rcu_periph[RCUS_FOR_BOARDS_LEDS + SENTINEL_NODE];
     } rcus_periph = {{RCU_GPIOA, RCU_GPIOC, RCU_GPIOC}};
+    // Sentinel node ---------------------------^ (The same item as above.)
 
     /* enable the leds clock in board */
-    rcu_init(&rcus_periph);
+    slns_rcu_init((rcu_periph_enum *) &rcus_periph);
     /* configure led GPIO ports */
-    gpio_init(GPIOC, GPIO_MODE_OUT_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_13);
-    gpio_init(GPIOA, GPIO_MODE_OUT_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_1);
-    gpio_init(GPIOA, GPIO_MODE_OUT_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_2);
-    GPIO_BOP(GPIOC) = GPIO_PIN_13;
-    GPIO_BOP(GPIOA) = GPIO_PIN_1;
-    GPIO_BOP(GPIOA) = GPIO_PIN_2;
+    slns_gpio_leds_in_board_init();
 }
 
 /*!
