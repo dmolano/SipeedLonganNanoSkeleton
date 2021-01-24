@@ -1,5 +1,5 @@
 /* 
- * This file is part of the Sipeed Longan Nano Skeleton.
+ * This file is part of the Sipeed Longan Nano Skeleton. LEDs in board: PC13(red led) , PA1 (green led) and PA2 (blue led)
  * Copyright (c) 2021 Dionisio Molano Robledo.
  * 
  * This program is free software: you can redistribute it and/or modify  
@@ -16,9 +16,10 @@
  */
 #include "gd32vf103.h"
 #include "time.h"
+#include "rcu.h"
 
-#ifndef __DMR_SLNS_LED_H
-#define __DMR_SLNS_LED_H
+#ifndef __GD32VF103_SLNS_LED_H
+#define __GD32VF103_SLNS_LED_H
 
 // ---------------------------------------------------------------------
 // Public Prototypes

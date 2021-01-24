@@ -1,5 +1,5 @@
 /* 
- * This file is part of the Sipeed Longan Nano Skeleton.
+* This file is part of the Sipeed Longan Nano Skeleton. LEDs in board: PC13(red led) , PA1 (green led) and PA2 (blue led)
  * Copyright (c) 2021 Dionisio Molano Robledo.
  * 
  * This program is free software: you can redistribute it and/or modify  
@@ -32,7 +32,13 @@
 */
 void led_init()
 {
-    rcu_init();
+    struct
+    {
+        rcu_periph_enum rcu_periph[3];
+    } rcus_periph = {{RCU_GPIOA, RCU_GPIOC, RCU_GPIOC}};
+
+    /* enable the leds clock in board */
+    rcu_init(&rcus_periph);
     /* configure led GPIO ports */
     gpio_init(GPIOC, GPIO_MODE_OUT_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_13);
     gpio_init(GPIOA, GPIO_MODE_OUT_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_1);

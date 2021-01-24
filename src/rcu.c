@@ -1,5 +1,5 @@
 /* 
- * This file is part of the Sipeed Longan Nano Skeleton.
+ * This file is part of the Sipeed Longan Nano Skeleton. Reset and clock unit (RCU).
  * Copyright (c) 2021 Dionisio Molano Robledo.
  * 
  * This program is free software: you can redistribute it and/or modify  
@@ -30,10 +30,17 @@
     \param[out] none
     \retval     none
 */
-void rcu_init()
+void rcu_init(rcu_periph_enum *rcu_periph)
 {
-    /* enable the led clock */
-    rcu_periph_clock_enable(RCU_GPIOA);
-    rcu_periph_clock_enable(RCU_GPIOB);
-    rcu_periph_clock_enable(RCU_GPIOC);
+    if (rcu_periph != NULL)
+    {
+        rcu_periph_enum last_rcu;
+
+        do
+        {
+            last_rcu = *rcu_periph;
+            rcu_periph_clock_enable(*rcu_periph);
+            rcu_periph++;
+        } while (*rcu_periph != last_rcu);
+    }
 }
