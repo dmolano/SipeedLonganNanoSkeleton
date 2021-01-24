@@ -71,6 +71,8 @@ int main_init(sipeed_longan_nano_ptr sln_data_ptr)
 
     led_init();
 
+    lcd_init(&(sln_data_ptr->sln_lcd_data));
+
     return result;
 }
 

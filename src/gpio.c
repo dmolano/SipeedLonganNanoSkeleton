@@ -16,6 +16,7 @@
  */
 
 #include "gpio.h"
+#include "time.h"
 
 // ---------------------------------------------------------------------
 // Local Prototypes
@@ -38,4 +39,22 @@ void slns_gpio_leds_in_board_init()
     GPIO_BOP(RED_LED_BOARD_GPIO_PORT) = RED_LED_BOARD_GPIO_PIN;
     GPIO_BOP(GREEN_LED_BOARD_GPIO_PORT) = GREEN_LED_BOARD_GPIO_PIN;
     GPIO_BOP(BLUE_LED_BOARD_GPIO_PORT) = BLUE_LED_BOARD_GPIO_PIN;
+}
+
+/*!
+    \brief      LCD initialization function over DMA.
+    \param[in]  none.
+    \param[out] none
+    \retval     none
+*/
+void slns_gpio_lcd_over_dma_init()
+{
+    gpio_init(GPIOA, GPIO_MODE_AF_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_5 | GPIO_PIN_7);
+    gpio_init(GPIOB, GPIO_MODE_OUT_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_0 | GPIO_PIN_1 | GPIO_PIN_2);
+
+    gpio_bit_reset(GPIOB, GPIO_PIN_0 | GPIO_PIN_1); // DC=0, RST=0
+    gpio_bit_set(GPIOB, GPIO_PIN_2); // Disable lcd cs
+    time_delay_1ms(1);
+    gpio_bit_set(GPIOB, GPIO_PIN_1); // RST=1
+    time_delay_1ms(5);
 }

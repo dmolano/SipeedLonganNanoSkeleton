@@ -16,6 +16,7 @@
  */
 
 #include "led.h"
+#include "lcd.h"
 
 #define NO_ERROR_INIT_SLN 0
 
@@ -26,4 +27,5 @@
 */
 typedef struct
 {
+    sln_lcd sln_lcd_data;
 } sipeed_longan_nano, *sipeed_longan_nano_ptr;

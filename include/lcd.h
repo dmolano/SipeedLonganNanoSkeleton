@@ -1,5 +1,6 @@
 /* 
- * This file is part of the Sipeed Longan Nano Skeleton. General-purpose and alternate-function I/Os (GPIO and AFIO)
+ * This file is part of the Sipeed Longan Nano Skeleton. TFT LCD MODULE - 0.96 inch - 80RGB*160DOTS - MODULE NUMBER:SPD096-IPS
+ * LH096T-IG01 is a 80RGBX160 dot-matrix TFT LCD module. This module is composed of a TFT LCD Panel, driver ICs (Main Drive IC ST7735S), FPC and a Backlight unit.
  * Copyright (c) 2021 Dionisio Molano Robledo.
  * 
  * This program is free software: you can redistribute it and/or modify  
@@ -15,35 +16,39 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 #include "gd32vf103.h"
+#include "rcu.h"
+#include "gpio.h"
 
-#ifndef __GD32VF103_SLNS_GPIO_H
-#define __GD32VF103_SLNS_GPIO_H
+#ifndef __GD32VF103_SLNS_LCD_H
+#define __GD32VF103_SLNS_LCD_H
 
-#define RED_LED_BOARD_GPIO_PIN GPIO_PIN_13
-#define GREEN_LED_BOARD_GPIO_PIN GPIO_PIN_1
-#define BLUE_LED_BOARD_GPIO_PIN GPIO_PIN_2
+/*!
+    \brief      LCD wait status
+*/
+typedef enum
+{
+    WAIT_NONE,
+    WAIT_READ_U24,
+    WAIT_WRITE_U24,
+} lcd_wait_status;
 
-#define RED_LED_BOARD_GPIO_PORT GPIOC
-#define GREEN_LED_BOARD_GPIO_PORT GPIOA
-#define BLUE_LED_BOARD_GPIO_PORT GPIOA
+/*!
+    \brief      Sipeed Longan Nano struct
+*/
+typedef struct
+{
+    lcd_wait_status wait_status;
+} sln_lcd, *sln_lcd_ptr;
 
 // ---------------------------------------------------------------------
 // Public Prototypes
 // ---------------------------------------------------------------------
 /*!
-    \brief      GPIO initialization function on the board's LEDs.
-    \param[in]  none
+    \brief      LCD initialization function.
+    \param[in]  sln_lcd_info_ptr
     \param[out] none
     \retval     none
 */
-void slns_gpio_leds_in_board_init();
-
-/*!
-    \brief      LCD initialization function over DMA.
-    \param[in]  none.
-    \param[out] none
-    \retval     none
-*/
-void slns_gpio_lcd_over_dma_init();
+void lcd_init(sln_lcd_ptr sln_lcd_data_ptr);
 
 #endif
