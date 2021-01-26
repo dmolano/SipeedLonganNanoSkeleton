@@ -73,6 +73,8 @@ int main_init(sipeed_longan_nano_ptr sln_data_ptr)
 
     lcd_init(&(sln_data_ptr->sln_lcd_data));
 
+    lcd_setpixel(&(sln_data_ptr->sln_lcd_data), 0, 0, 0xFF);
+
     return result;
 }
 

@@ -22,6 +22,9 @@
 #ifndef __GD32VF103_SLNS_LCD_H
 #define __GD32VF103_SLNS_LCD_H
 
+#define LCD_WIDTH               160
+#define LCD_HEIGHT              80
+
 /*!
     \brief      LCD wait status
 */
@@ -38,6 +41,13 @@ typedef enum
 typedef struct
 {
     lcd_wait_status wait_status;
+    struct
+    {
+        uint8_t enabled;
+        uint32_t address;
+    } frame_background;
+    uint16_t width;
+    uint16_t height;
 } sln_lcd, *sln_lcd_ptr;
 
 // ---------------------------------------------------------------------
@@ -50,5 +60,15 @@ typedef struct
     \retval     none
 */
 void lcd_init(sln_lcd_ptr sln_lcd_data_ptr);
+
+/*!
+    \brief      set pixel
+    \param[in]  sln_lcd_info_ptr:
+    \param[in]  x: x position
+    \param[in]  y: y position
+    \param[out] none
+    \retval     none
+*/
+void lcd_setpixel(sln_lcd_ptr sln_lcd_info_ptr, int x, int y, unsigned short int color);
 
 #endif

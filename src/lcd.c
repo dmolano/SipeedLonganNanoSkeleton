@@ -21,7 +21,7 @@
 #define RCUS_FOR_LCD 5
 #define SENTINEL_NODE 1
 
-typedef enum ST7735S_Command_Type
+typedef enum st7735s_command_type
 {
     NOP = 0x00,
     SWRESET = 0x01,   /* Software Reset */
@@ -78,7 +78,7 @@ typedef enum ST7735S_Command_Type
     GMCTRP1 = 0xe0,   /* Gamma '+'Polarity Correction Characteristics Setting */
     GMCTRN1 = 0xe1,   /* Gamma '-'Polarity Correction Characteristics Setting */
     GCV = 0xfc,       /* Gate Pump Clock Frequency Variable */
-} ST7735S_Command;
+} st7735s_command;
 
 // ---------------------------------------------------------------------
 // Local Prototypes
@@ -105,7 +105,7 @@ void lcd_mode_data();
     \param[out] none
     \retval     none
 */
-void lcd_reg(ST7735S_Command command);
+void lcd_reg(st7735s_command command);
 
 /*!
     \brief      set unsigned byte data
@@ -118,6 +118,23 @@ void lcd_u8c(uint8_t data);
 // ---------------------------------------------------------------------
 // Bodies
 // ---------------------------------------------------------------------
+/*!
+    \brief      clear LCD
+    \param[in]  lcd:
+    \param[in]  color:
+    \param[out] none
+    \retval     none
+*/
+void lcd_clear(sln_lcd_ptr lcd, uint16_t color)
+{
+    if ((lcd != NULL) && (lcd->frame_background.enabled == 0))
+    {
+        lcd_wait(lcd);
+        lcd_set_addr(0, 0, lcd->width, lcd->height);
+        dma_send_const_u16((uint32_t)&color, lcd->width * lcd->height);
+    }
+}
+
 /*!
     \brief      LCD initialization function.
     \param[in]  sln_lcd_info_ptr
@@ -133,7 +150,7 @@ void lcd_init(sln_lcd_ptr sln_lcd_info_ptr)
     // Sentinel node ---------------------------^ (The same item as above.)
 
     /* enable the leds clock in board */
-    slns_rcu_init((rcu_periph_enum *) &rcus_periph);
+    slns_rcu_init((rcu_periph_enum *)&rcus_periph);
     /* configure led GPIO ports */
     slns_gpio_lcd_over_dma_init();
     // Initialization settings. Based on lcd.c in gd32v_lcd example.
@@ -173,6 +190,15 @@ void lcd_init(sln_lcd_ptr sln_lcd_info_ptr)
             lcd_u8c(*p++);
         }
     }
+    // Init internal state.
+    sln_lcd_info_ptr->wait_status = WAIT_NONE;
+    sln_lcd_info_ptr->frame_background.enabled = 0;
+    sln_lcd_info_ptr->frame_background.address = 0;
+    sln_lcd_info_ptr->width = LCD_WIDTH;
+    sln_lcd_info_ptr->height = LCD_HEIGHT;
+
+    // Clear display.
+    lcd_clear(sln_lcd_info_ptr, 0x0000);
 }
 
 /*!
@@ -203,12 +229,92 @@ void lcd_mode_data()
     \param[out] none
     \retval     none
 */
-void lcd_reg(ST7735S_Command command)
+void lcd_reg(st7735s_command command)
 {
     spi_wait_idle();
     spi_set_8bit();
     lcd_mode_cmd();
     spi_i2s_data_transmit(SPI0, command);
+}
+
+/*!
+    \brief      set address
+    \param[in]  x: x position
+    \param[in]  y: y position
+    \param[in]  width: 
+    \param[in]  height:
+    \param[out] none
+    \retval     none
+*/
+void lcd_set_addr(uint16_t x, uint16_t y, uint16_t width, uint16_t height)
+{
+    lcd_reg(CASET);
+    lcd_u16(x + 1);
+    lcd_u16c(x + width);
+    lcd_reg(RASET);
+    lcd_u16(y + 26);
+    lcd_u16c(y + height + 25);
+    lcd_reg(RAMWR);
+}
+
+/*!
+    \brief      set pixel
+    \param[in]  sln_lcd_info_ptr:
+    \param[in]  x: x position
+    \param[in]  y: y position
+    \param[out] none
+    \retval     none
+*/
+void lcd_setpixel(sln_lcd_ptr sln_lcd_info_ptr, int x, int y, unsigned short int color)
+{
+    if ((sln_lcd_info_ptr != NULL) && (sln_lcd_info_ptr->frame_background.enabled == 0))
+    {
+        return;
+    }
+
+    lcd_wait(sln_lcd_info_ptr);
+    lcd_set_addr(x, y, 1, 1);
+    lcd_u8(color >> 8);
+    lcd_u8c(color);
+}
+/*!
+    \brief      set unsigned half word data
+    \param[in]  data: data
+    \param[out] none
+    \retval     none
+*/
+void lcd_u16(uint16_t data)
+{
+    spi_wait_idle();
+    spi_set_16bit();
+    lcd_mode_data();
+    spi_i2s_data_transmit(SPI0, data);
+}
+
+/*!
+    \brief      set unsigned half word data
+    \param[in]  data: data
+    \param[out] none
+    \retval     none
+*/
+void lcd_u16c(uint16_t data)
+{
+    spi_wait_tbe();
+    spi_i2s_data_transmit(SPI0, data);
+}
+
+/*!
+    \brief      set unsigned byte data
+    \param[in]  data: data
+    \param[out] none
+    \retval     none
+*/
+void lcd_u8(uint8_t data)
+{
+    spi_wait_idle();
+    spi_set_8bit();
+    lcd_mode_data();
+    spi_i2s_data_transmit(SPI0, data);
 }
 
 /*!
@@ -221,4 +327,83 @@ void lcd_u8c(uint8_t data)
 {
     spi_wait_tbe();
     spi_i2s_data_transmit(SPI0, data);
+}
+
+/*!
+    \brief      wait
+    \param[in]  lcd:
+     \param[out] none
+    \retval     none
+*/
+void lcd_wait(sln_lcd_ptr sln_lcd_info_ptr)
+{
+    if ((sln_lcd_info_ptr != NULL) && (sln_lcd_info_ptr->frame_background.enabled == 0))
+    {
+        switch (sln_lcd_info_ptr->wait_status)
+        {
+        case WAIT_READ_U24:
+            lcd_wait_read_u24(sln_lcd_info_ptr);
+            break;
+        case WAIT_WRITE_U24:
+            lcd_wait_write_u24(sln_lcd_info_ptr);
+            break;
+        default:
+            // WAIT_NONE
+            break;
+        }
+    }
+}
+
+/*!
+    \brief      wait read u24
+    \param[in]  sln_lcd_info_ptr:
+     \param[out] none
+    \retval     none
+*/
+void lcd_wait_read_u24(sln_lcd_ptr sln_lcd_info_ptr)
+{
+    if (sln_lcd_info_ptr != NULL)
+    {
+        // Poll until reception is complete.
+        while (dma_transfer_number_get(DMA0, DMA_CH1))
+            ;
+
+        // Reception is complete, reconfigure SPI for sending and toggle LCD CS to stop transmission.
+        dma_channel_disable(DMA0, DMA_CH1);
+        spi_disable(SPI0);
+        // TFT_CS = 1 => Disable TFT
+        gpio_bit_set(GPIOB, GPIO_PIN_2); // Disable lcd cs
+        SPI_CTL0(SPI0) = (uint32_t)(SPI_MASTER | SPI_TRANSMODE_FULLDUPLEX | SPI_FRAMESIZE_8BIT | SPI_NSS_SOFT | SPI_ENDIAN_MSB | SPI_CK_PL_LOW_PH_1EDGE | SPI_PSC_8);
+        SPI_CTL1(SPI0) = (uint32_t)(SPI_CTL1_DMATEN);
+        // TFT_RST = 1 => Reset TFT
+        gpio_bit_set(GPIOB, GPIO_PIN_1); // RST=1
+        spi_enable(SPI0);
+
+        // Return to normal color mode.
+        lcd_reg(COLMOD); // COLMOD
+        lcd_u8(0x55);    // RGB565 (transferred as 16b)
+
+        // Clear wait status and return.
+        sln_lcd_info_ptr->wait_status = WAIT_NONE;
+    }
+}
+
+/*!
+    \brief      wait write u24
+    \param[in]  lcd:
+     \param[out] none
+    \retval     none
+*/
+void lcd_wait_write_u24(sln_lcd_ptr sln_lcd_info_ptr)
+{
+    if (sln_lcd_info_ptr != NULL)
+    {
+        // Wait until send is complete, then restore normal color mode.
+        spi_wait_idle();
+        lcd_reg(COLMOD); // COLMOD
+        lcd_u8(0x55);    // RGB565 (transferred as 16b)
+
+        // Clear wait status and return.
+        sln_lcd_info_ptr->wait_status = WAIT_NONE;
+    }
 }

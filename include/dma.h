@@ -1,5 +1,5 @@
 /* 
- * This file is part of the Sipeed Longan Nano Skeleton. Serial peripheral interface (SPI).
+ * This file is part of the Sipeed Longan Nano Skeleton. 
  * Copyright (c) 2021 Dionisio Molano Robledo.
  * 
  * This program is free software: you can redistribute it and/or modify  
@@ -16,41 +16,36 @@
  */
 #include "gd32vf103.h"
 
-#ifndef __GD32VF103_SLNS_SPI_H
-#define __GD32VF103_SLNS_SPI_H
+#ifndef __GD32VF103_SLNS_DMA_H
+#define __GD32VF103_SLNS_DMA_H
 
 // ---------------------------------------------------------------------
 // Public Prototypes
 // ---------------------------------------------------------------------
 /*!
-    \brief      set 8 bits
+    \brief      wait recive
     \param[in]  none
-    \param[out] none
+     \param[out] none
     \retval     none
 */
-void spi_set_8bit();
+void dma_wait_recv();
 
 /*!
-    \brief      set 16 bits
-    \param[in]  none
+    \brief      send unsigned byte to DMA peripheral
+    \param[in]  dma_const_data_value: data
+    \param[in]  count: count
     \param[out] none
     \retval     none
 */
-void spi_set_16bit();
+void dma_send_const_u8(uint32_t dma_const_data_value_address, uint32_t count);
 
 /*!
-    \brief      set 8 bits
-    \param[in]  none
+    \brief      send unsigned half word to DMA peripheral
+    \param[in]  dma_const_data_value_address: data
+    \param[in]  count: count
     \param[out] none
     \retval     none
 */
-void spi_wait_idle();
+void dma_send_const_u16(uint32_t dma_const_data_value_address, uint32_t count);
 
-/*!
-    \brief      set 8 bits
-    \param[in]  none
-    \param[out] none
-    \retval     none
-*/
-void spi_wait_tbe();
 #endif

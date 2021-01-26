@@ -42,6 +42,22 @@ void spi_set_8bit()
 }
 
 /*!
+    \brief      set 16 bits
+    \param[in]  none
+    \param[out] none
+    \retval     none
+*/
+void spi_set_16bit()
+{
+    if (!(SPI_CTL0(SPI0) & (uint32_t)(SPI_CTL0_FF16)))
+    {
+        SPI_CTL0(SPI0) &= ~(uint32_t)(SPI_CTL0_SPIEN);
+        SPI_CTL0(SPI0) |= (uint32_t)(SPI_CTL0_FF16);
+        SPI_CTL0(SPI0) |= (uint32_t)(SPI_CTL0_SPIEN);
+    }
+}
+
+/*!
     \brief      set 8 bits
     \param[in]  none
     \param[out] none
